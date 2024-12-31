@@ -1,3 +1,10 @@
 
+#Download ova file
 https://drive.google.com/file/d/1gSS4zymgfCHJxdSa49DuRYOV5Melp2oy/view?usp=sharing
+
+#adding host entry "/etc/hosts"
+echo "$(ip route list | grep default | awk {'print $9'}) $(hostname) " >> /etc/hosts
+
+#
+
 
