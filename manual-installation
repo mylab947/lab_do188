@@ -2,9 +2,51 @@
 #Download ova file
 https://drive.google.com/file/d/1gSS4zymgfCHJxdSa49DuRYOV5Melp2oy/view?usp=sharing
 
-#adding host entry "/etc/hosts"
+###################################################################################
+
+# Login to the VM
+# user= admin
+# pass= admin
+
+# Update
+sudo dnf update -y
+
+# Installing podman 
+sudo dnf install -y podman podman-compose
+sudo hostnamectl set-hostname registry.do188.lab
+
+# Run podman registry container for the local registry service
+podman run -d -p 5000:5000 --name registry registry:2
+
+# Adding ip and host entry to "/etc/hosts"
 echo "$(ip route list | grep default | awk {'print $9'}) $(hostname) " >> /etc/hosts
 
-#
 
+# Backup # 
+cp -p /etc/containers/registries.conf /etc/containers/registries.conf_original
+
+#Add
+[registries]
+
+#Add
+[registries.search]
+registries = ['registry.access.redhat.com', 'registry.redhat.io', 'docker.io', 'registry.do180.lab:5000']
+[registries.insecure]
+registries = ['registry.do180.lab:5000']
+
+###################################################################################
+
+#######Let’s do this below steps after config modified above#######
+podman search httpd ####searching from the public repos
+podman pull httpd
+####pull image from public repos
+podman tag httpd:latest registry.do188.lab:5000/httpd:latest ####tag the image before pushing to the
+local repo(registry.do188.lab:5000)
+podman push registry.do188.lab:5000/httpd:latest
+repo(registry.do188.lab:5000)
+curl http://registry.do188.lab:5000/v2/_catalog
+####PUSH the image to the local
+####Verify the local repos in the local repo directory
+
+###################################################################################
 
